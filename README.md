@@ -34,21 +34,21 @@ See the `examples` directory.
 
 Basic steps:
 
-# Add `GotImageCropMsg` to your `Msg` type.
+1. Add `GotImageCropMsg` to your `Msg` type.
 
-# Add a div to your view:
+2. Add a div to your view:
 
-    div
-      [ class "image-crop-picture"
-      , style "max-width" "100%"
-      ]
-      [ Html.map GotImageCropMsg ( ImageCrop.view model.url model.cropSettings) ]
+        div
+          [ class "image-crop-picture"
+          , style "max-width" "100%"
+          ]
+          [ Html.map GotImageCropMsg ( ImageCrop.view model.url model.cropSettings) ]
 
-# Handle this new msg in your `update` function:
+3. Handle this new msg in your `update` function:
 
-    case msg of
-        GotImageCropMsg subMsg ->
-            let
-                ( cropSettings, cmd ) = ImageCrop.update subMsg model.cropSettings
-            in
-                ( { model | cropSettings = cropSettings } )
+        case msg of
+            GotImageCropMsg subMsg ->
+                let
+                    ( cropSettings, cmd ) = ImageCrop.update subMsg model.cropSettings
+                in
+                    ( { model | cropSettings = cropSettings } )
