@@ -34,9 +34,11 @@ See the `examples` directory.
 
 Basic steps:
 
-1. Add `GotImageCropMsg` to your `Msg` type.
+1. Add an `ImageCrop.Model` type to your model.
 
-2. Add a div to your view:
+2. Add `GotImageCropMsg` to your `Msg` type.
+
+3. Add a div to your view:
 
         div
           [ class "image-crop-picture"
@@ -44,7 +46,7 @@ Basic steps:
           ]
           [ Html.map GotImageCropMsg ( ImageCrop.view model.url model.cropSettings) ]
 
-3. Handle this new msg in your `update` function:
+4. Handle this new msg in your `update` function:
 
         case msg of
             GotImageCropMsg subMsg ->
