@@ -1,6 +1,13 @@
 # Elm image cropper
 
-Allow a user to crop the given image. Mobile friendly. Supports resize, and double pinch.
+Allow a user to crop the given image. Mobile first design, so simply
+use the double pinch to resize and move. Also supports desktop and mouse.
+
+
+## Screenshots
+
+<img src="https://raw.githubusercontent.com/berenddeboer/elm-image-crop/master/screenshot_1.png" />
+
 
 # Installation
 
