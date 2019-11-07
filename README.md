@@ -72,7 +72,7 @@ javascript. You may also run into CORS issues: you cannot extract part
 of an image that does not belong to your website unless that third
 party website has told you this is OK.
 
-6. You will need two more message: one for the click which initiates
+6. Add two more message: one for the click which initiates
    the action to extract the image, the other to handle the callback
    from JavaScript where the actual extraction process takes place.
 
@@ -84,11 +84,11 @@ party website has told you this is OK.
             | GotCroppedImage (Result Decode.Error String)
 
 
-7. You need to update your `update` function to handle these, please
-   see [Main.elm](examples/crop-and-get-cropped-image/src/Main.elm)
-   for an example.
+7. Update your `update` function to handle these, see
+   [Main.elm](examples/crop-and-get-cropped-image/src/Main.elm) for an
+   example.
 
-8. You will need a subscription to handle the callback from JavaScript:
+8. Add a subscription to handle the callback from JavaScript:
 
         subscriptions model =
             ImageCrop.Export.croppedImage (decodeUrl >> GotCroppedImage)
