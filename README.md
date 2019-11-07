@@ -17,7 +17,7 @@ module, because Elm does not support Canvas. So you'll have to install it manual
 
 1. In your Elm application root directory:
 
-        elm clone git@github.com:berenddeboer/elm-image-crop.git
+        git clone git@github.com:berenddeboer/elm-image-crop.git
 
 2. Then add `elm.json` so to list the directory under your "source directories", something like this:
 
