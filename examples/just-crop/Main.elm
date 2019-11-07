@@ -2,11 +2,9 @@ module Main exposing (..)
 
 -- Basic example of how to use the ImageCrop module.
 
-
 import Browser
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
-import Html.Events exposing (onClick)
 import ImageCrop
 
 
@@ -15,7 +13,7 @@ import ImageCrop
 
 
 main =
-  Browser.sandbox { init = init, update = update, view = view }
+    Browser.sandbox { init = init, update = update, view = view }
 
 
 
@@ -36,22 +34,22 @@ init =
 
 
 
-
 -- UPDATE
 
 
 type Msg
-  = GotImageCropMsg ImageCrop.Msg
+    = GotImageCropMsg ImageCrop.Msg
 
 
 update : Msg -> Model -> Model
 update msg model =
-  case msg of
-      GotImageCropMsg subMsg ->
-          let
-              ( cropSettings, cmd ) = ImageCrop.update subMsg model.cropSettings
-          in
-              ( { model | cropSettings = cropSettings } )
+    case msg of
+        GotImageCropMsg subMsg ->
+            let
+                ( cropSettings, cmd ) =
+                    ImageCrop.update subMsg model.cropSettings
+            in
+            { model | cropSettings = cropSettings }
 
 
 
@@ -61,7 +59,7 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div
-    [ class "image-crop-picture"
-    , style "max-width" "100%"
-    ]
-    [ Html.map GotImageCropMsg ( ImageCrop.view model.url model.cropSettings) ]
+        [ class "image-crop-picture"
+        , style "max-width" "100%"
+        ]
+        [ Html.map GotImageCropMsg (ImageCrop.view model.url model.cropSettings) ]
