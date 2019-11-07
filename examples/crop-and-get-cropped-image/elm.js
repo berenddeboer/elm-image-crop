@@ -5103,13 +5103,25 @@ var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (flags) {
 	return _Utils_Tuple2(
-		{cropSettings: $elm$core$Maybe$Nothing, url: 'pinnacles.jpg'},
+		{cropSettings: $elm$core$Maybe$Nothing, error: $elm$core$Maybe$Nothing, extractedImageUrl: $elm$core$Maybe$Nothing, url: 'pinnacles.jpg'},
 		$elm$core$Platform$Cmd$none);
 };
-var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
+var $author$project$Main$GotCroppedImage = function (a) {
+	return {$: 'GotCroppedImage', a: a};
+};
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
+var $elm$json$Json$Decode$value = _Json_decodeValue;
+var $author$project$ImageCrop$Export$croppedImage = _Platform_incomingPort('croppedImage', $elm$json$Json$Decode$value);
+var $elm$json$Json$Decode$decodeValue = _Json_run;
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$Main$decodeUrl = $elm$json$Json$Decode$decodeValue($elm$json$Json$Decode$string);
 var $author$project$Main$subscriptions = function (model) {
-	return $elm$core$Platform$Sub$none;
+	return $author$project$ImageCrop$Export$croppedImage(
+		A2($elm$core$Basics$composeR, $author$project$Main$decodeUrl, $author$project$Main$GotCroppedImage));
 };
 var $author$project$ImageCrop$Export$doCropImage = _Platform_outgoingPort('doCropImage', $elm$core$Basics$identity);
 var $elm$json$Json$Encode$float = _Json_wrap;
@@ -5693,32 +5705,53 @@ var $author$project$ImageCrop$update = F2(
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'GotImageCropMsg') {
-			var subMsg = msg.a;
-			var _v1 = A2($author$project$ImageCrop$update, subMsg, model.cropSettings);
-			var cropSettings = _v1.a;
-			var cmd = _v1.b;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{cropSettings: cropSettings}),
-				$elm$core$Platform$Cmd$none);
-		} else {
-			var _v2 = model.cropSettings;
-			if (_v2.$ === 'Just') {
-				var crop_settings = _v2.a;
-				var y_scale = (_Utils_cmp(crop_settings.natural_height, crop_settings.image_height) > 0) ? (crop_settings.natural_height / crop_settings.image_height) : 1;
-				var x_scale = (_Utils_cmp(crop_settings.natural_width, crop_settings.image_width) > 0) ? (crop_settings.natural_width / crop_settings.image_width) : 1;
-				var width = $elm$core$Basics$round(crop_settings.length * x_scale);
-				var top = $elm$core$Basics$round(crop_settings.top * y_scale);
-				var left = $elm$core$Basics$round(crop_settings.left * x_scale);
-				var height = $elm$core$Basics$round(crop_settings.length * y_scale);
+		switch (msg.$) {
+			case 'GotImageCropMsg':
+				var subMsg = msg.a;
+				var _v1 = A2($author$project$ImageCrop$update, subMsg, model.cropSettings);
+				var cropSettings = _v1.a;
+				var cmd = _v1.b;
 				return _Utils_Tuple2(
-					model,
-					$author$project$ImageCrop$Export$cropImage('elm-image-crop--img')(left)(top)(width)(height)(crop_settings.natural_width)(crop_settings.natural_height)(crop_settings.length)(crop_settings.length)('image/jpeg')(0.9));
-			} else {
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			}
+					_Utils_update(
+						model,
+						{cropSettings: cropSettings}),
+					$elm$core$Platform$Cmd$none);
+			case 'SaveProfilePicture':
+				var _v2 = model.cropSettings;
+				if (_v2.$ === 'Just') {
+					var crop_settings = _v2.a;
+					var y_scale = (_Utils_cmp(crop_settings.natural_height, crop_settings.image_height) > 0) ? (crop_settings.natural_height / crop_settings.image_height) : 1;
+					var x_scale = (_Utils_cmp(crop_settings.natural_width, crop_settings.image_width) > 0) ? (crop_settings.natural_width / crop_settings.image_width) : 1;
+					var width = $elm$core$Basics$round(crop_settings.length * x_scale);
+					var top = $elm$core$Basics$round(crop_settings.top * y_scale);
+					var left = $elm$core$Basics$round(crop_settings.left * x_scale);
+					var height = $elm$core$Basics$round(crop_settings.length * y_scale);
+					return _Utils_Tuple2(
+						model,
+						$author$project$ImageCrop$Export$cropImage('elm-image-crop--img')(left)(top)(width)(height)(crop_settings.natural_width)(crop_settings.natural_height)(crop_settings.length)(crop_settings.length)('image/jpeg')(0.9));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			default:
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var url = result.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								extractedImageUrl: $elm$core$Maybe$Just(url)
+							}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								error: $elm$core$Maybe$Just('Could not extract image.')
+							}),
+						$elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $author$project$Main$GotImageCropMsg = function (a) {
@@ -5735,6 +5768,7 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
@@ -5754,6 +5788,13 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $elm$html$Html$pre = _VirtualDom_node('pre');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
 var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
@@ -5763,7 +5804,6 @@ var $author$project$ImageCrop$GotImageSize = F4(
 		return {$: 'GotImageSize', a: a, b: b, c: c, d: d};
 	});
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
-var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$at = F2(
 	function (fields, decoder) {
@@ -5796,12 +5836,6 @@ var $author$project$ImageCrop$onLoad = function (tagger) {
 		$elm$html$Html$Events$on,
 		'load',
 		A5($elm$json$Json$Decode$map4, tagger, $author$project$ImageCrop$imageWidth, $author$project$ImageCrop$imageHeight, $author$project$ImageCrop$naturalWidth, $author$project$ImageCrop$naturalHeight));
-};
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
 var $author$project$ImageCrop$BeAtRest = {$: 'BeAtRest'};
 var $author$project$ImageCrop$MoveBottomLeft = {$: 'MoveBottomLeft'};
@@ -6018,7 +6052,6 @@ var $elm$svg$Svg$polyline = $elm$svg$Svg$trustedNode('polyline');
 var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var $elm$svg$Svg$Attributes$style = _VirtualDom_attribute('style');
 var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
-var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$ImageCrop$targetId = A2(
 	$elm$json$Json$Decode$at,
 	_List_fromArray(
@@ -6378,12 +6411,43 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$SaveProfilePicture)
+						$elm$html$Html$Events$onClick($author$project$Main$SaveProfilePicture),
+						A2($elm$html$Html$Attributes$style, 'display', 'block')
 					]),
 				_List_fromArray(
 					[
 						$elm$html$Html$text('Save')
-					]))
+					])),
+				function () {
+				var _v0 = model.extractedImageUrl;
+				if (_v0.$ === 'Just') {
+					var url = _v0.a;
+					return A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src(url)
+							]),
+						_List_Nil);
+				} else {
+					return $elm$html$Html$text('');
+				}
+			}(),
+				function () {
+				var _v1 = model.error;
+				if (_v1.$ === 'Just') {
+					var s = _v1.a;
+					return A2(
+						$elm$html$Html$pre,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(s)
+							]));
+				} else {
+					return $elm$html$Html$text('');
+				}
+			}()
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(

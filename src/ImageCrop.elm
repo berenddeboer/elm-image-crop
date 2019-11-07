@@ -6,6 +6,14 @@ module ImageCrop exposing
     )
 
 
+{-| Make an ImageCrop component available.
+
+@docs Model
+@docs Msg
+@docs update
+@docs view
+-}
+
 import Html exposing (Attribute, Html, div, img, text)
 import Html.Attributes as Html exposing (class, src, style)
 import Html.Events exposing (on)
@@ -18,6 +26,9 @@ import Svg.Events exposing (onMouseDown, onMouseUp)
 
 
 -- MODEL
+
+{-| The model to track the internal state of this component.
+-}
 
 type alias Model =
     { left : Int
@@ -90,6 +101,8 @@ initialModel width height natural_width natural_height =
 -- VIEW
 
 
+{-| The view of an image that can be cropped.
+-}
 view : String -> Maybe Model -> Html Msg
 view url maybe_settings =
     div
@@ -393,6 +406,8 @@ uncurry f (a,b) =
 
 -- UPDATE
 
+{-| Opaque type for the messages this component uses.
+-}
 type Msg
     = GotImageSize Float Float Float Float
     | StartMove Int Int
@@ -408,6 +423,8 @@ type Msg
     | RectangleResizedByPinch Touch.Event
 
 
+{-| Handle the commands.
+-}
 update : Msg -> Maybe Model -> ( Maybe Model, Cmd Msg )
 update msg maybe_model =
     case maybe_model of

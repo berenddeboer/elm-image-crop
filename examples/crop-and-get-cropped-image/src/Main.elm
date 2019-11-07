@@ -3,11 +3,12 @@ module Main exposing (..)
 -- Basic example of how to use the ImageCrop module.
 
 import Browser
-import Html exposing (Html, button, div, text)
-import Html.Attributes exposing (class, style)
+import Html exposing (Html, button, div, img, pre, text)
+import Html.Attributes exposing (class, src, style)
 import Html.Events exposing (onClick)
 import ImageCrop
 import ImageCrop.Export exposing (cropImage)
+import Json.Decode as Decode
 
 
 
@@ -30,17 +31,24 @@ main =
 type alias Model =
     { url : String
     , cropSettings : Maybe ImageCrop.Model
+    , extractedImageUrl : Maybe String
+    , error : Maybe String
     }
 
-type alias Flags = {}
+
+type alias Flags =
+    {}
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { url = "pinnacles.jpg"
       , cropSettings = Nothing
+      , extractedImageUrl = Nothing
+      , error = Nothing
       }
-    , Cmd.none )
+    , Cmd.none
+    )
 
 
 
@@ -50,6 +58,7 @@ init flags =
 type Msg
     = GotImageCropMsg ImageCrop.Msg
     | SaveProfilePicture
+    | GotCroppedImage (Result Decode.Error String)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -97,6 +106,14 @@ update msg model =
                 Nothing ->
                     ( model, Cmd.none )
 
+        GotCroppedImage result ->
+            case result of
+                Ok url ->
+                    ( { model | extractedImageUrl = Just url }, Cmd.none )
+
+                Err _ ->
+                    ( { model | error = Just "Could not extract image." }, Cmd.none )
+
 
 
 -- VIEW
@@ -112,13 +129,33 @@ view model =
             ]
             [ Html.map GotImageCropMsg (ImageCrop.view model.url model.cropSettings) ]
         , button
-            [ onClick SaveProfilePicture ]
+            [ onClick SaveProfilePicture
+            , style "display" "block"
+            ]
             [ text "Save" ]
+        , case model.extractedImageUrl of
+            Just url ->
+                img [ src url ] []
+
+            Nothing ->
+                text ""
+        , case model.error of
+            Just s ->
+                pre [] [ text s ]
+
+            Nothing ->
+                text ""
         ]
 
 
 
 -- SUBSCRIPTIONS
 
+
 subscriptions model =
-    Sub.none
+    ImageCrop.Export.croppedImage (decodeUrl >> GotCroppedImage)
+
+
+decodeUrl : Decode.Value -> Result Decode.Error String
+decodeUrl =
+    Decode.decodeValue Decode.string

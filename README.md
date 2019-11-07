@@ -67,4 +67,37 @@ Basic steps:
 # Retrieving the cropped image
 
 Letting a user crop the image is just step one. You want to retrieve
-the cropped image as well. That will require some javascript.
+the cropped image as well. That will require you to include a piece of
+javascript. You may also run into CORS issues: you cannot extract part
+of an image that does not belong to your website unless that third
+party website has told you this is OK.
+
+6. You will need two more message: one for the click which initiates
+   the action to extract the image, the other to handle the callback
+   from JavaScript where the actual extraction process takes place.
+
+   So your Msg looks like this:
+
+        type Msg
+            = GotImageCropMsg ImageCrop.Msg
+            | SaveProfilePicture
+            | GotCroppedImage (Result Decode.Error String)
+
+
+7. You need to update your `update` function to handle these, please
+   see [Main.elm](examples/crop-and-get-cropped-image/src/Main.elm)
+   for an example.
+
+8. You will need a subscription to handle the callback from JavaScript:
+
+        subscriptions model =
+            ImageCrop.Export.croppedImage (decodeUrl >> GotCroppedImage)
+
+        decodeUrl : Decode.Value -> Result Decode.Error String
+        decodeUrl =
+            Decode.decodeValue Decode.string
+
+    As you can see the callback just returns a url, a data url, of the
+    extracted image. You can store this in your model, or use it as
+    part of an HTTP request which store the extracted image in a
+    backend or so.
