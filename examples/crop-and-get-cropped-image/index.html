@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Image Crop Example</title>
+  <style>body { padding: 0; margin: 0; }</style>
+</head>
+
+<body>
+ <div id="elm-app-is-loaded-here"></div>
+
+ <script src="../../src/ImageCrop/extract_cropped_image.js"></script>
+ <script src="elm.js"></script>
+ <script>
+   var app = Elm.Main.init({
+     node: document.getElementById("elm-app-is-loaded-here")
+   });
+   app.ports.doCropImage.subscribe(function (data) {
+     var url = image_crop_cropped_image (data)
+     app.ports.croppedImage.send(url)
+   })
+ </script>
+</body>
+</html>
