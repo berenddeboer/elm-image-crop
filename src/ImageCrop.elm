@@ -79,7 +79,7 @@ initialModel width height natural_width natural_height =
         int_natural_width = round natural_width
         int_natural_height = round natural_height
         minimum_length = 100 -- Pretty arbitrary number
-        maximum_length = Debug.log "maximum_length" (min int_width int_height)
+        maximum_length = min int_width int_height
     in
         { left = 0
         , top = 0
