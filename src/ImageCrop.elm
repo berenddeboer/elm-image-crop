@@ -73,22 +73,26 @@ of the image.
 initialModel : Float -> Float -> Float -> Float -> Model
 initialModel width height natural_width natural_height =
     let
-        minimum_length = 100
         proposed_length = round (width / 2)
         int_width = round width
         int_height = round height
         int_natural_width = round natural_width
         int_natural_height = round natural_height
+        minimum_length = 100 -- Pretty arbitrary number
+        maximum_length = Debug.log "maximum_length" (min int_width int_height)
     in
         { left = 0
         , top = 0
         , length =
             if proposed_length >= minimum_length then
-                proposed_length
+                if proposed_length <= maximum_length then
+                    proposed_length
+                else
+                    maximum_length
             else
                 minimum_length
         , minimum_length = minimum_length
-        , maximum_length = min int_width int_height
+        , maximum_length = maximum_length
         , image_width = int_width
         , image_height = int_height
         , natural_width = int_natural_width
