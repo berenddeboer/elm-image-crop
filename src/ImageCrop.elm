@@ -179,7 +179,7 @@ viewCropRectangle settings =
             , ( offset + resize_marker_length, offset )
             ]
 
-        border_color = "white"
+        border_color = "#eee"
 
         wind_direction move_direction =
             case move_direction of
