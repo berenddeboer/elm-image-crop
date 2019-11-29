@@ -13,7 +13,6 @@ before_install:
       make && make install;
       cd ..;
     fi
-  - npm i
   - npm install -g elm@latest
   - elm --version
 script:
