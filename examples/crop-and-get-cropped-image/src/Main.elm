@@ -7,7 +7,7 @@ import Html exposing (Html, button, div, img, pre, text)
 import Html.Attributes exposing (class, src, style)
 import Html.Events exposing (onClick)
 import ImageCrop
-import ImageCrop.Export exposing (cropImage)
+import ImageCrop.Export exposing (cropImageDefault)
 import Json.Decode as Decode
 
 
@@ -74,35 +74,7 @@ update msg model =
         SaveProfilePicture ->
             case model.cropSettings of
                 Just crop_settings ->
-                    let
-                        x_scale =
-                            if crop_settings.natural_width > crop_settings.image_width then
-                                toFloat crop_settings.natural_width / toFloat crop_settings.image_width
-
-                            else
-                                1
-
-                        y_scale =
-                            if crop_settings.natural_height > crop_settings.image_height then
-                                toFloat crop_settings.natural_height / toFloat crop_settings.image_height
-
-                            else
-                                1
-
-                        left =
-                            round (toFloat crop_settings.left * x_scale)
-
-                        top =
-                            round (toFloat crop_settings.top * y_scale)
-
-                        width =
-                            round (toFloat crop_settings.length * x_scale)
-
-                        height =
-                            round (toFloat crop_settings.length * y_scale)
-                    in
-                    ( model, cropImage "elm-image-crop--img" left top width height crop_settings.natural_width crop_settings.natural_height crop_settings.length crop_settings.length "image/jpeg" 0.9 )
-
+                    ( model, cropImageDefault crop_settings )
                 Nothing ->
                     ( model, Cmd.none )
 
