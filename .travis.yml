@@ -1,5 +1,7 @@
 language: node_js
-dist: bionic
+node_js:
+  - "10.15.3"
+dist: xenial
 cache:
   directories:
     - sysconfcpus
@@ -20,5 +22,5 @@ script:
   - cd examples/just-crop
   - ../../sysconfcpus/bin/sysconfcpus -n 2 elm make --optimize Main.elm
   - cd ../crop-and-get-cropped-image
-  - ../../sysconfcpus/bin/sysconfcpus -n 2 elm make --optimize src/Main.elm
+  - ../../sysconfcpus/bin/sysconfcpus -n 2 elm make --optimize src/Main.elm --output main.js
   - cd ../..
