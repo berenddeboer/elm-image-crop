@@ -80,10 +80,7 @@ initialModel width height natural_width natural_height =
         int_natural_height = round natural_height
         minimum_length = 100 -- Pretty arbitrary number
         maximum_length = min int_width int_height
-    in
-        { left = 0
-        , top = 0
-        , length =
+        length =
             if proposed_length >= minimum_length then
                 if proposed_length <= maximum_length then
                     proposed_length
@@ -91,6 +88,10 @@ initialModel width height natural_width natural_height =
                     maximum_length
             else
                 minimum_length
+    in
+        { left = ( int_width - length ) // 2
+        , top = ( int_height - length ) // 2
+        , length = length
         , minimum_length = minimum_length
         , maximum_length = maximum_length
         , image_width = int_width
